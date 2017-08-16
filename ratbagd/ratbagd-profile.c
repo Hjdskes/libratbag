@@ -280,6 +280,12 @@ static int ratbagd_profile_active_signal_cb(sd_bus *bus,
 				  "b",
 				  ratbag_profile_is_active(lib_profile));
 
+	(void) sd_bus_emit_properties_changed(bus,
+					      profile->path,
+					      RATBAGD_NAME_ROOT ".Profile",
+					      "IsActive",
+					      NULL);
+
 	return 0;
 }
 
