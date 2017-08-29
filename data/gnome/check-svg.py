@@ -6,6 +6,7 @@ from lxml import etree
 import logging
 
 ns = {'svg': 'http://www.w3.org/2000/svg'}
+style_query = '//svg:rect[@id=\"{}\"][contains(@style, \"{}\")]'
 
 logging.basicConfig(level=logging.DEBUG)
 logger = None
@@ -67,6 +68,11 @@ def check_elements(root, prefix, required=0):
             if leader not in element_ids:
                 logger.error("Missing {} for {}".format(leader, e))
                 success = False
+            else:
+                element = root.xpath(style_query.format(leader, 'text-align'), namespaces=ns)
+                if element is None or len(element) != 1 or element[0] is None:
+                    logger.error("Missing style property for {}".format(leader))
+                    success = False
         elif idx < required:
             logger.error("Missing {}: {}".format(prefix, e))
             success = False
