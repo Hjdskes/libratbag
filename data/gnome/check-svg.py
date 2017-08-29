@@ -52,6 +52,7 @@ def check_elements(root, prefix, required=0):
     # This includes leaders and lines
     element_ids = [p.attrib['id'] for p in root.xpath('//svg:path', namespaces=ns) if p.attrib['id'].startswith(prefix)]
     element_ids += [p.attrib['id'] for p in root.xpath('//svg:rect', namespaces=ns) if p.attrib['id'].startswith(prefix)]
+    element_ids += [g.attrib['id'] for g in root.xpath('//svg:g', namespaces=ns) if g.attrib['id'].startswith(prefix)]
 
     idx = 0
     highest = -1
@@ -73,6 +74,11 @@ def check_elements(root, prefix, required=0):
                 if element is None or len(element) != 1 or element[0] is None:
                     logger.error("Missing style property for {}".format(leader))
                     success = False
+
+            path = '{}{}-path'.format(prefix, idx)
+            if path not in element_ids:
+                logger.error("Missing {} for {}".format(path, e))
+                success = False
         elif idx < required:
             logger.error("Missing {}: {}".format(prefix, e))
             success = False
